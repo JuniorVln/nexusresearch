@@ -1,0 +1,1038 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Relatório de Leads Curitiba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card-bg: #16161e;
+            --accent: #7c4dff;
+            --accent-glow: rgba(124, 77, 255, 0.3);
+            --text: #e0e0e0;
+            --text-dim: #a0a0a0;
+            --adv-color: #ffd740;
+            --odo-color: #40c4ff;
+            --mov-color: #ff5252;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            padding: 80px 20px;
+            text-align: center;
+            background: radial-gradient(circle at top right, #1a1a2e, var(--bg));
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p { color: var(--text-dim); font-size: 1.2rem; }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 0 40px 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+        }
+
+        .card.Advocacia::before { background: var(--adv-color); }
+        .card.Odontologia::before { background: var(--odo-color); }
+        .card.Móveis::before { background: var(--mov-color); }
+        .card.Outros::before { background: var(--text-dim); }
+
+        .category-badge {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .Advocacia .category-badge { color: var(--adv-color); }
+        .Odontologia .category-badge { color: var(--odo-color); }
+        .Móveis .category-badge { color: var(--mov-color); }
+
+        .name { font-size: 1.4rem; font-weight: 600; margin-bottom: 5px; color: #fff; }
+        .handle { color: var(--accent); font-weight: 400; margin-bottom: 15px; display: block; text-decoration: none; }
+        
+        .stats {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .stats .count { color: #fff; font-size: 1.1rem; }
+
+        .bio {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        .btn-visit {
+            display: inline-block;
+            padding: 12px;
+            text-align: center;
+            background: linear-gradient(90deg, var(--accent), #9c7cff);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        .btn-visit:hover { opacity: 0.9; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .grid { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Nexus Prospects</h1>
+        <p>Lead Generation Report - Curitiba, PR</p>
+    </div>
+
+    <div class="filters" id="filters">
+        <button class="filter-btn active" onclick="filterLeads('all')">Todos</button>
+        <button class="filter-btn" onclick="filterLeads('Advocacia')">Advocacia</button>
+        <button class="filter-btn" onclick="filterLeads('Odontologia')">Odontologia</button>
+        <button class="filter-btn" onclick="filterLeads('Móveis')">Móveis</button>
+    </div>
+
+    <div class="grid" id="leadsGrid">
+        
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">DAVID MELOTO | ADVOGADO</h2>
+            <a href="https://www.instagram.com/davidmeloto.adv" target="_blank" class="handle">@davidmeloto.adv</a>
+            <div class="stats">
+                <span class="count">13856</span> seguidores
+            </div>
+            <p class="bio">🏆Mais de 1.000 clientes.
+⚖️ Especialista em Direito Trabalhista. 
+✨ A primeira conversa é grátis.
+👇 Atendimento agilizado no WhatsApp.</p>
+            <a href="https://www.instagram.com/davidmeloto.adv" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Winderson Jaster | Advogado de Inventário e Família em Curitiba</h2>
+            <a href="https://www.instagram.com/windersonjaster" target="_blank" class="handle">@windersonjaster</a>
+            <div class="stats">
+                <span class="count">3741</span> seguidores
+            </div>
+            <p class="bio">📜 Inventário e Planejamento Sucessório
+⚖️ Divórcio Litigioso
+🧭 15 anos de advocacia em Curitiba
+📍 Atuação exclusiva, especializada e estratégica</p>
+            <a href="https://www.instagram.com/windersonjaster" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Gabriel Bergamo | Advogado da Saúde</h2>
+            <a href="https://www.instagram.com/gabrielbergamoadv" target="_blank" class="handle">@gabrielbergamoadv</a>
+            <div class="stats">
+                <span class="count">2230</span> seguidores
+            </div>
+            <p class="bio">⚖️ Na defesa dos pacientes
+💻 Online | Brasil
+Saiba mais ⤵️</p>
+            <a href="https://www.instagram.com/gabrielbergamoadv" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Tito Alcântara | Advogado Curitiba</h2>
+            <a href="https://www.instagram.com/titoalcantara" target="_blank" class="handle">@titoalcantara</a>
+            <div class="stats">
+                <span class="count">1733</span> seguidores
+            </div>
+            <p class="bio">@walcantaraadv 
+15 anos de experiência jurídica
+Soluções patrimoniais e empresariais
+Estratégia para decisões seguras | Cenários complexos</p>
+            <a href="https://www.instagram.com/titoalcantara" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Richard Macedo | Advogado Curitiba</h2>
+            <a href="https://www.instagram.com/richardmacedo.adv" target="_blank" class="handle">@richardmacedo.adv</a>
+            <div class="stats">
+                <span class="count">1619</span> seguidores
+            </div>
+            <p class="bio">▪️ ||  Advogado 
+🔓||   Promovendo a JUSTIÇA por todo país 
+Fale comigo:</p>
+            <a href="https://www.instagram.com/richardmacedo.adv" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">ADVOCACIASDA</h2>
+            <a href="https://www.instagram.com/advocaciasda" target="_blank" class="handle">@advocaciasda</a>
+            <div class="stats">
+                <span class="count">1519</span> seguidores
+            </div>
+            <p class="bio">Sem biografia disponível.</p>
+            <a href="https://www.instagram.com/advocaciasda" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Advogado | Vitor Hugo Loureiro</h2>
+            <a href="https://www.instagram.com/loureirovitor.adv" target="_blank" class="handle">@loureirovitor.adv</a>
+            <div class="stats">
+                <span class="count">1424</span> seguidores
+            </div>
+            <p class="bio">🔴 Direito do Consumidor ⚖️ADVOGADO e presidente do Sindicato dos Advogados do PR
+📺Jornalista e Apresentador TV</p>
+            <a href="https://www.instagram.com/loureirovitor.adv" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Marcos Espinola</h2>
+            <a href="https://www.instagram.com/marcos.espinola.advogado" target="_blank" class="handle">@marcos.espinola.advogado</a>
+            <div class="stats">
+                <span class="count">1379</span> seguidores
+            </div>
+            <p class="bio">Especialista em Planejamento Previdenciário
+Melhorando aposentadorias, pensões e benefícios do INSS desde 2008!
+Sócio @advocaciacomproposito.com.br</p>
+            <a href="https://www.instagram.com/marcos.espinola.advogado" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Joelson Ostì | Advogado Civil & Empresarial - Curitiba</h2>
+            <a href="https://www.instagram.com/joelson_osti_advogado" target="_blank" class="handle">@joelson_osti_advogado</a>
+            <div class="stats">
+                <span class="count">1064</span> seguidores
+            </div>
+            <p class="bio">Direito Digital · IA · LGPD · Jurimetria
+Advogado com DNA em Computação & Negócios
+Onde a tecnologia cria risco, eu crio solução.
+OAB/PR · Professor ∴</p>
+            <a href="https://www.instagram.com/joelson_osti_advogado" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Renan Klein | Advogado</h2>
+            <a href="https://www.instagram.com/renangklein" target="_blank" class="handle">@renangklein</a>
+            <div class="stats">
+                <span class="count">876</span> seguidores
+            </div>
+            <p class="bio">📕 Mestrando em Direito 
+⚖️ Especialista em Direito Penal
+⚖️ Especialista em Direito Empresarial
+📍 Curitiba - PR
+❤️ @emistadler</p>
+            <a href="https://www.instagram.com/renangklein" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Fleith, Zilli & Quadros | Advogados em Curitiba</h2>
+            <a href="https://www.instagram.com/fzqadvogados.curitiba" target="_blank" class="handle">@fzqadvogados.curitiba</a>
+            <div class="stats">
+                <span class="count">441</span> seguidores
+            </div>
+            <p class="bio">Defendendo os seus direitos há mais de 30 anos. 
+📍Curitiba, Paraná 
+Fale conosco! ￬</p>
+            <a href="https://www.instagram.com/fzqadvogados.curitiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Mateus Parente</h2>
+            <a href="https://www.instagram.com/mateusparente_advogado" target="_blank" class="handle">@mateusparente_advogado</a>
+            <div class="stats">
+                <span class="count">336</span> seguidores
+            </div>
+            <p class="bio">Advogado | Especialista em Direito do Trabalho | Especializando em Direito Civil | Curitiba-PR</p>
+            <a href="https://www.instagram.com/mateusparente_advogado" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Bolzon Advogados</h2>
+            <a href="https://www.instagram.com/bolzonadvogados" target="_blank" class="handle">@bolzonadvogados</a>
+            <div class="stats">
+                <span class="count">228</span> seguidores
+            </div>
+            <p class="bio">◊ Inteligência Jurídica
+◊ Serviços Jurídicos Personalizados
+Atuação em Diversas Áreas.</p>
+            <a href="https://www.instagram.com/bolzonadvogados" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Cordeiro Youssef Advogados</h2>
+            <a href="https://www.instagram.com/cordeiroyoussefadvogados" target="_blank" class="handle">@cordeiroyoussefadvogados</a>
+            <div class="stats">
+                <span class="count">215</span> seguidores
+            </div>
+            <p class="bio">Escritório jurídico que traz inovação para transformar suas oportunidades e seu negócio!    
+Curitiba • Itajaí 
+📲 (41) 3149-1004</p>
+            <a href="https://www.instagram.com/cordeiroyoussefadvogados" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Advogados de família - Castro & Martins</h2>
+            <a href="https://www.instagram.com/advogadofamiliarcuritiba" target="_blank" class="handle">@advogadofamiliarcuritiba</a>
+            <div class="stats">
+                <span class="count">201</span> seguidores
+            </div>
+            <p class="bio">Escritório de advocacia especializado em direito de família, direito das sucessões, direito homoafetivo, direito civil, entre outros.</p>
+            <a href="https://www.instagram.com/advogadofamiliarcuritiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Advocacia Navarro</h2>
+            <a href="https://www.instagram.com/advocacianavarro" target="_blank" class="handle">@advocacianavarro</a>
+            <div class="stats">
+                <span class="count">61</span> seguidores
+            </div>
+            <p class="bio">Advocacia no centro de Curitiba especialista em ações trabalhistas, previdenciária, indenizações por morte acidental, aposentadoria, entre outros</p>
+            <a href="https://www.instagram.com/advocacianavarro" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Advocacia">
+            <span class="category-badge">Advocacia</span>
+            <h2 class="name">Leandro</h2>
+            <a href="https://www.instagram.com/adv.familia.curitiba" target="_blank" class="handle">@adv.familia.curitiba</a>
+            <div class="stats">
+                <span class="count">1</span> seguidores
+            </div>
+            <p class="bio">Infelizmente procurando atendimento para pensão, revisão,divórcio ou inventário? Posso te ajudar, tratamento humano e direto com o advogado!</p>
+            <a href="https://www.instagram.com/adv.familia.curitiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">Moveleste</h2>
+            <a href="https://www.instagram.com/moveleste" target="_blank" class="handle">@moveleste</a>
+            <div class="stats">
+                <span class="count">9449</span> seguidores
+            </div>
+            <p class="bio">Móveis Usados e Seminovos para escritório.
+Desde 1991.
+COMPRA e VENDA
+⠀
+(41)99697-0383 (WhatsApp)
+(41)99697-0084 (WhatsApp)
+(41)3262-3063 (Fixo)</p>
+            <a href="https://www.instagram.com/moveleste" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">A Loja do Escritório</h2>
+            <a href="https://www.instagram.com/alojadoescritorio" target="_blank" class="handle">@alojadoescritorio</a>
+            <div class="stats">
+                <span class="count">7436</span> seguidores
+            </div>
+            <p class="bio">Solução em Mobiliário Corporativo
+📍 Rua Roberto Faria, 192 - Fanny - Curitiba/PR
+📱 (41) 98861-4158
+🕗 Seg. à Sex. | 08h às 18h</p>
+            <a href="https://www.instagram.com/alojadoescritorio" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">First Line Móveis</h2>
+            <a href="https://www.instagram.com/firstlinemoveis" target="_blank" class="handle">@firstlinemoveis</a>
+            <div class="stats">
+                <span class="count">2039</span> seguidores
+            </div>
+            <p class="bio">Móveis e Cadeiras para Escritório.
+Móveis sob Medida.
+Contato: (41)3344-9600
+suporte@meusmoveis.com.br
+Av. Marechal Floriano Peixoto, 9121 Curitiba-PR</p>
+            <a href="https://www.instagram.com/firstlinemoveis" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">Cia do Escritório | Curitiba e SJP</h2>
+            <a href="https://www.instagram.com/ciadoescritorio" target="_blank" class="handle">@ciadoescritorio</a>
+            <div class="stats">
+                <span class="count">1593</span> seguidores
+            </div>
+            <p class="bio">✨ Móveis e cadeiras de alta performance para escritórios
+ 🚀 +20 anos em projetos personalizados
+📍  Loja Curitiba & São José | Entregamos em todo PR</p>
+            <a href="https://www.instagram.com/ciadoescritorio" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">Casa Do Escritório ⋄ GROUP J&R</h2>
+            <a href="https://www.instagram.com/casadoescritorio" target="_blank" class="handle">@casadoescritorio</a>
+            <div class="stats">
+                <span class="count">1470</span> seguidores
+            </div>
+            <p class="bio">4 lojas em Curitiba e + de 600 itens 
+Qualidade ⋄ Agilidade  ⋄ Variedade
+📞   (41) 99942-0446 
+------------------</p>
+            <a href="https://www.instagram.com/casadoescritorio" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">Qualitá Móveis Corporativos</h2>
+            <a href="https://www.instagram.com/qualitamoveis" target="_blank" class="handle">@qualitamoveis</a>
+            <div class="stats">
+                <span class="count">1419</span> seguidores
+            </div>
+            <p class="bio">Móveis | Cadeiras | Pisos | Divisórias
+Av. Getúlio Vargas, 3581  Curitiba |  Brazil📍
+📞 (41) 3242- 0227  📱(41) 98847- 3986
+qualita@onda.com.br</p>
+            <a href="https://www.instagram.com/qualitamoveis" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">Top office Móveis para escritório</h2>
+            <a href="https://www.instagram.com/topofficecuritiba" target="_blank" class="handle">@topofficecuritiba</a>
+            <div class="stats">
+                <span class="count">1091</span> seguidores
+            </div>
+            <p class="bio">Móveis e cadeiras para escritório, produtos nacionais e com garantia, vários modelos a pronta entrega! 
+WhatsApp (41)3057-6516</p>
+            <a href="https://www.instagram.com/topofficecuritiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">Shopping do Escritório</h2>
+            <a href="https://www.instagram.com/shoppingescritorio" target="_blank" class="handle">@shoppingescritorio</a>
+            <div class="stats">
+                <span class="count">856</span> seguidores
+            </div>
+            <p class="bio">Loja e Fábrica de móveis corporativos.
+Há 17 anos, transformando espaços em ambientes de alta produtividade.
+Converse com nossa equipe.
+(41) 3020-3333</p>
+            <a href="https://www.instagram.com/shoppingescritorio" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">Luvizotto - A Casa do Escritório</h2>
+            <a href="https://www.instagram.com/luvizottoacasadoescritorio" target="_blank" class="handle">@luvizottoacasadoescritorio</a>
+            <div class="stats">
+                <span class="count">707</span> seguidores
+            </div>
+            <p class="bio">+ de 73 anos de história.
+2 lojas - Curitiba e Pinhais
+Papelaria l Mobiliário Corporativo l Projetos l Assistência Técnica</p>
+            <a href="https://www.instagram.com/luvizottoacasadoescritorio" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Móveis">
+            <span class="category-badge">Móveis</span>
+            <h2 class="name">ALcad Móveis Para Escritório Ltda</h2>
+            <a href="https://www.instagram.com/alcadmoveis" target="_blank" class="handle">@alcadmoveis</a>
+            <div class="stats">
+                <span class="count">461</span> seguidores
+            </div>
+            <p class="bio">• ⏰️ 8:00 as 17:30. Segunda a sexta.
+• 📌 Rua Padre José Lopacinski, 715 - Ecoville</p>
+            <a href="https://www.instagram.com/alcadmoveis" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Clínica Odontológica com 23 anos de excelência</h2>
+            <a href="https://www.instagram.com/sanidente" target="_blank" class="handle">@sanidente</a>
+            <div class="stats">
+                <span class="count">13026</span> seguidores
+            </div>
+            <p class="bio">💎 Alto Padrão de Qualidade
+💎 Todas as Especialidades
+💎 Invisalign, Lentes e Implantes
+📞 3077-8288
+📍 R. Ildefonso Stockler de França, 06 - Novo Mundo</p>
+            <a href="https://www.instagram.com/sanidente" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Lentes de Resina e Porcelana • Dentista Curitiba</h2>
+            <a href="https://www.instagram.com/dra.mariliaguedes" target="_blank" class="handle">@dra.mariliaguedes</a>
+            <div class="stats">
+                <span class="count">11640</span> seguidores
+            </div>
+            <p class="bio">✨ Arte, ciência e naturalidade no seu sorriso
+Especialista e Mestre em Estética Dental
++15 anos de experiência
+Atendimento personalizado ⤵︎</p>
+            <a href="https://www.instagram.com/dra.mariliaguedes" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dentista em Curitiba | Dra. Thamires Gomes</h2>
+            <a href="https://www.instagram.com/thamiresgprodocimo" target="_blank" class="handle">@thamiresgprodocimo</a>
+            <div class="stats">
+                <span class="count">10344</span> seguidores
+            </div>
+            <p class="bio">Ortodontia •Alinhadores •Estética Dental  
+✨Tratamentos completos e personalizados
+💎Invisalign Doctor
+📅 Agende sua consulta 👇</p>
+            <a href="https://www.instagram.com/thamiresgprodocimo" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">ORALCLIN Odontologia Curitiba</h2>
+            <a href="https://www.instagram.com/oralclincuritiba" target="_blank" class="handle">@oralclincuritiba</a>
+            <div class="stats">
+                <span class="count">6251</span> seguidores
+            </div>
+            <p class="bio">35 anos de experiência em Odontologia. Tratamentos odontológicos completos, seguros e personalizados! 
+📲 1ª Consulta 🔗 Link na Bio.</p>
+            <a href="https://www.instagram.com/oralclincuritiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">BelleDent Odontologia Curitiba</h2>
+            <a href="https://www.instagram.com/belledentodontologia" target="_blank" class="handle">@belledentodontologia</a>
+            <div class="stats">
+                <span class="count">5572</span> seguidores
+            </div>
+            <p class="bio">▫️Ortodontia | 🌈 Odontopediatria 
+▫️ Próteses e Restaurações Estéticas
+▫️ Implantes e Cirurgias
+💋 Harmonização Orofacial
+⬇️ Agendamentos</p>
+            <a href="https://www.instagram.com/belledentodontologia" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Orto Sorriso Odontologia Curitiba-Pr</h2>
+            <a href="https://www.instagram.com/ortosorrisocuritiba" target="_blank" class="handle">@ortosorrisocuritiba</a>
+            <div class="stats">
+                <span class="count">5529</span> seguidores
+            </div>
+            <p class="bio">✨ Sorrisos alinhados & reabilitados
+🦷 Especialistas em ortodontia, implantes e próteses
+📍 Curitiba | Rebouças & Pinheirinho
+💬 Agende pelo direct</p>
+            <a href="https://www.instagram.com/ortosorrisocuritiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Odhos Odontologia - Dentista Curitiba</h2>
+            <a href="https://www.instagram.com/odhosodontologia" target="_blank" class="handle">@odhosodontologia</a>
+            <div class="stats">
+                <span class="count">4788</span> seguidores
+            </div>
+            <p class="bio">Odontologia de Alta Performance
+Odontologia Personalizada
+📞 (41) 3039-7400 
+📲 (41) 99815-0159
+📌 Agende sua Consulta 👇🏻</p>
+            <a href="https://www.instagram.com/odhosodontologia" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Nathália Schimunda</h2>
+            <a href="https://www.instagram.com/dranathaliaschimunda" target="_blank" class="handle">@dranathaliaschimunda</a>
+            <div class="stats">
+                <span class="count">3310</span> seguidores
+            </div>
+            <p class="bio">👩‍⚕️Dentista | CURITIBA
+🦷Mestre e Doutoranda | Foco Em Prótese
+👩‍🏫 Professora Universitária 
+👄Há 6 anos transformando sorrisos           
+Consultas⤵️</p>
+            <a href="https://www.instagram.com/dranathaliaschimunda" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Blevi Odontologia Curitiba</h2>
+            <a href="https://www.instagram.com/bleviodontologia" target="_blank" class="handle">@bleviodontologia</a>
+            <div class="stats">
+                <span class="count">3079</span> seguidores
+            </div>
+            <p class="bio">🦷 Implantes • Estética • Facetas • Harmonização • Odontopediatria 
+✨ Onde a beleza encontra o sorriso
+📍 Curitiba | Cajuru
+📲 Agende sua avaliação 👇</p>
+            <a href="https://www.instagram.com/bleviodontologia" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Oliveira Machado Odontologia</h2>
+            <a href="https://www.instagram.com/oliveiramachado_odontologia" target="_blank" class="handle">@oliveiramachado_odontologia</a>
+            <div class="stats">
+                <span class="count">2252</span> seguidores
+            </div>
+            <p class="bio">✨️ Há mais de 10 anos transformando SORRISOS! ✨️
+🦷 Implantes, Invisalign, Lentes de Contato, Protocolo
+📞 Telefone: (41) 3308-3967 
+📅 AGENDAMENTOS:</p>
+            <a href="https://www.instagram.com/oliveiramachado_odontologia" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Elodonto Especialidades/ Dentista Curitiba</h2>
+            <a href="https://www.instagram.com/dracarol_elodonto" target="_blank" class="handle">@dracarol_elodonto</a>
+            <div class="stats">
+                <span class="count">2239</span> seguidores
+            </div>
+            <p class="bio">✨Esse perfil está desativado, porque foi hackeado. Por favor siga o insta @clinicaelodonto.
+Será um prazer ter vc lá</p>
+            <a href="https://www.instagram.com/dracarol_elodonto" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Jean Silveira de Souza | Dentista Curitiba</h2>
+            <a href="https://www.instagram.com/dr.jeansilveira" target="_blank" class="handle">@dr.jeansilveira</a>
+            <div class="stats">
+                <span class="count">2237</span> seguidores
+            </div>
+            <p class="bio">@dr.jeansilveira
+Há 29 anos cuidando de sorrisos e transformando vidas!
+Estética │ Ortodontia │ Implante Dentário 
+(41) 3039-0834 📱 99565-0020</p>
+            <a href="https://www.instagram.com/dr.jeansilveira" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Stories Odontologia Curitiba</h2>
+            <a href="https://www.instagram.com/storiesodontologiacuritiba" target="_blank" class="handle">@storiesodontologiacuritiba</a>
+            <div class="stats">
+                <span class="count">2161</span> seguidores
+            </div>
+            <p class="bio">Resp.Técnica Linda Rockenbach, CRO/PR 28.946 - Centro - CLM/PR 4.721</p>
+            <a href="https://www.instagram.com/storiesodontologiacuritiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">JK Odontologia Curitiba</h2>
+            <a href="https://www.instagram.com/jkodontologiacuritiba" target="_blank" class="handle">@jkodontologiacuritiba</a>
+            <div class="stats">
+                <span class="count">2150</span> seguidores
+            </div>
+            <p class="bio">🦷Há 22 anos transformando sorrisos e vidas 
+📞Agende sua consulta (41) 99268-1610
+RT: Dr Jak-son Capeletti CRO PR-14744</p>
+            <a href="https://www.instagram.com/jkodontologiacuritiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Clínica COI - Odontologia Integrada</h2>
+            <a href="https://www.instagram.com/clinicacoicuritiba" target="_blank" class="handle">@clinicacoicuritiba</a>
+            <div class="stats">
+                <span class="count">1640</span> seguidores
+            </div>
+            <p class="bio">⚜️Há 20 anos fazendo você e sua família sorrir! 
+⚜️Clínico geral | Ortodontia | Implantes | Estética
+Agendamentos 🔽
+☎️ (41) 98523-4394</p>
+            <a href="https://www.instagram.com/clinicacoicuritiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Odonto Excellence Capão Raso - Dentista Curitiba</h2>
+            <a href="https://www.instagram.com/odontoexcellencecapaoraso" target="_blank" class="handle">@odontoexcellencecapaoraso</a>
+            <div class="stats">
+                <span class="count">1533</span> seguidores
+            </div>
+            <p class="bio">🦷Clínica Odontológica Completa 
+✨Ortodontia, Endodontia, Implantodontia, Estética e mais!
+🗓️Agende sua consulta agora! ⬇️
+Rt Gustavo Fazzano CRO28201</p>
+            <a href="https://www.instagram.com/odontoexcellencecapaoraso" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dra Natalia Oliveira | Cirurgiã Dentista - Curitiba</h2>
+            <a href="https://www.instagram.com/dranataliagoliveira" target="_blank" class="handle">@dranataliagoliveira</a>
+            <div class="stats">
+                <span class="count">1487</span> seguidores
+            </div>
+            <p class="bio">✨ Beleza, sutileza e harmonia
+🎨 Odontologia estética facial e dental
+📍 Curitiba | CRO PR 33488
+Agendamentos e dúvidas 👇🏻</p>
+            <a href="https://www.instagram.com/dranataliagoliveira" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Kelli Freitas |  Dentista Curitiba</h2>
+            <a href="https://www.instagram.com/drakellifreitas" target="_blank" class="handle">@drakellifreitas</a>
+            <div class="stats">
+                <span class="count">1430</span> seguidores
+            </div>
+            <p class="bio">💎Clínica Geral | Adultos e Crianças
+💎Ortodontia- Alinhadores
+⭐️5 estrelas Google 
+📲 1ª Consulta no link abaixo 🔽</p>
+            <a href="https://www.instagram.com/drakellifreitas" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dentista 24 horas | Dentista em Curitiba l clínica Solutia</h2>
+            <a href="https://www.instagram.com/clinicasolutia" target="_blank" class="handle">@clinicasolutia</a>
+            <div class="stats">
+                <span class="count">1182</span> seguidores
+            </div>
+            <p class="bio">✨ Tudo em Odontologia & Estética 
+😁 Facetas | Implantes | Ortodontia | HOF
+⭐ Excelência  | ★★★★★ no Google
+⏰ ÚNICA com Atendimento 24h em Curitiba∴</p>
+            <a href="https://www.instagram.com/clinicasolutia" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Odonto Farias/ Dentista/ Curitiba</h2>
+            <a href="https://www.instagram.com/consultorioodontofarias" target="_blank" class="handle">@consultorioodontofarias</a>
+            <div class="stats">
+                <span class="count">884</span> seguidores
+            </div>
+            <p class="bio">🦷Saúde, estética e naturalidade! 
+🦷Corpo Clínico composto por especialistas que amam o que fazem e vão amar cuidar de você !
+Informações/ Consultas👇</p>
+            <a href="https://www.instagram.com/consultorioodontofarias" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dentista Curitiba</h2>
+            <a href="https://www.instagram.com/narazakiodontologia" target="_blank" class="handle">@narazakiodontologia</a>
+            <div class="stats">
+                <span class="count">882</span> seguidores
+            </div>
+            <p class="bio">Acreditamos que sorrir com confiança transforma vidas.
+Há + de 40 anos, reabilitamos com implantes, prótese e ortodontia.
+Sua nova fase começa aqui.</p>
+            <a href="https://www.instagram.com/narazakiodontologia" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dra. Emmanuelle | Cirurgiã dentista em Curitiba e Araucária</h2>
+            <a href="https://www.instagram.com/dra.manu" target="_blank" class="handle">@dra.manu</a>
+            <div class="stats">
+                <span class="count">868</span> seguidores
+            </div>
+            <p class="bio">✤ Implantes ▪︎ Cirurgia oral menor ▪︎ Reabilitação Oral 
+✤ Especialista em Implantodontia, ênfase em Prótese            ✤ CRO/PR 35289</p>
+            <a href="https://www.instagram.com/dra.manu" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">CIOM | Odontologia Curitiba</h2>
+            <a href="https://www.instagram.com/ciomodontologiaemedicina" target="_blank" class="handle">@ciomodontologiaemedicina</a>
+            <div class="stats">
+                <span class="count">768</span> seguidores
+            </div>
+            <p class="bio">• Transformamos vidas através de SORRISOS!
+• Saúde e Beleza em um só lugar!
+Fale Conosco ↴</p>
+            <a href="https://www.instagram.com/ciomodontologiaemedicina" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Jessica Rivera | Dentista em Curitiba • Aparelhos invisíveis</h2>
+            <a href="https://www.instagram.com/drajessicarivera" target="_blank" class="handle">@drajessicarivera</a>
+            <div class="stats">
+                <span class="count">735</span> seguidores
+            </div>
+            <p class="bio">💫 Especialista em resgatar o seu melhor sorriso
+🧡 Alinhadores invisíveis | SouSmile
+📍Curitiba - Xaxim
+CRO/PR 25539
+Agendamentos👇🏻</p>
+            <a href="https://www.instagram.com/drajessicarivera" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dens Odontologia</h2>
+            <a href="https://www.instagram.com/dens.curitiba" target="_blank" class="handle">@dens.curitiba</a>
+            <div class="stats">
+                <span class="count">635</span> seguidores
+            </div>
+            <p class="bio">Cuidado Odontológico Completo e Personalizado
+Especialista em Implantes e Próteses  
+📍 Localizada no Portão, Curitiba.
+  📲 Agende sua avaliação</p>
+            <a href="https://www.instagram.com/dens.curitiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dra Bruna Kindelmann| Dentista em Pinhais</h2>
+            <a href="https://www.instagram.com/drabrunakindelmann" target="_blank" class="handle">@drabrunakindelmann</a>
+            <div class="stats">
+                <span class="count">604</span> seguidores
+            </div>
+            <p class="bio">✨️Facetas em resina e porcelana
+✨️Próteses dentárias 
+✨️Clareamento 
+Cropr 24603|  📍@studiosmile.odontologia</p>
+            <a href="https://www.instagram.com/drabrunakindelmann" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">CEOC Odontologia Curitiba</h2>
+            <a href="https://www.instagram.com/ceoc_odontologia_curitiba" target="_blank" class="handle">@ceoc_odontologia_curitiba</a>
+            <div class="stats">
+                <span class="count">590</span> seguidores
+            </div>
+            <p class="bio">Odontologia Especializada Whats: (41) 98735-8829 - Tel: (41) 3319-7357</p>
+            <a href="https://www.instagram.com/ceoc_odontologia_curitiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dra Clarissa| Dentista em Curitiba</h2>
+            <a href="https://www.instagram.com/dra.clarissazbellorin" target="_blank" class="handle">@dra.clarissazbellorin</a>
+            <div class="stats">
+                <span class="count">575</span> seguidores
+            </div>
+            <p class="bio">Cuidar do seu sorriso é, acima de tudo, cuidar de você
+✨Estética do sorriso
+✨Reabilitação
+✨Implantes
+Atendimento humanizado ✨
+Curitiba/PR CRO 39042</p>
+            <a href="https://www.instagram.com/dra.clarissazbellorin" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">ORAL ON 💙 Implantes dentarios</h2>
+            <a href="https://www.instagram.com/oraloncuritiba" target="_blank" class="handle">@oraloncuritiba</a>
+            <div class="stats">
+                <span class="count">569</span> seguidores
+            </div>
+            <p class="bio">😃Transforme sua experiência de Sorrir
+🦷 Clinica Odontológica em Curitiba
+🗓️ Agende sua avaliação. 
+RT Dr.Guilherme P. Costa CRO/PR 30533.</p>
+            <a href="https://www.instagram.com/oraloncuritiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Dra. Julia Godoy • Invisalign em Curitiba-PR 🇧🇷</h2>
+            <a href="https://www.instagram.com/drajuliagodoy" target="_blank" class="handle">@drajuliagodoy</a>
+            <div class="stats">
+                <span class="count">464</span> seguidores
+            </div>
+            <p class="bio">Sua melhor versão começa com um sorriso alinhado!
+🎓 Especialista em Ortodontia🔹Invisalign®️ doctor
+▫️Clareamento • Prevenção 
+📱Fale comigo👇🏼
+CRO 31475</p>
+            <a href="https://www.instagram.com/drajuliagodoy" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Isabelle Lugarezi • Dentista Curitiba</h2>
+            <a href="https://www.instagram.com/draisabellelugarezi" target="_blank" class="handle">@draisabellelugarezi</a>
+            <div class="stats">
+                <span class="count">427</span> seguidores
+            </div>
+            <p class="bio">• Cirurgiã dentista | CRO 34.991
+• Pós-graduanda em prótese e dentística 
+• Curitiba 📍
+Agende no link abaixo</p>
+            <a href="https://www.instagram.com/draisabellelugarezi" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">SMILEPRO - Odontologia</h2>
+            <a href="https://www.instagram.com/smilepro.curitiba" target="_blank" class="handle">@smilepro.curitiba</a>
+            <div class="stats">
+                <span class="count">321</span> seguidores
+            </div>
+            <p class="bio">Clínica odontológica especializada e focada em impactar positivamente o sorriso de seus pacientes.</p>
+            <a href="https://www.instagram.com/smilepro.curitiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Clínica Odontológica e Estética</h2>
+            <a href="https://www.instagram.com/odontologia_curitiba" target="_blank" class="handle">@odontologia_curitiba</a>
+            <div class="stats">
+                <span class="count">261</span> seguidores
+            </div>
+            <p class="bio">Implante Único 🦷
+Implante Protocolo 🦷
+Facetas em Resina 😁
+Profilaxia Dentária 🪥
+Prótese Dentária 😄
+Botox💉
+Harmonização Facial ☺️
+Preenchimento👄</p>
+            <a href="https://www.instagram.com/odontologia_curitiba" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Prime Dent Odontologia | Clínica Odontológica em Curitiba</h2>
+            <a href="https://www.instagram.com/primedent_odontologia" target="_blank" class="handle">@primedent_odontologia</a>
+            <div class="stats">
+                <span class="count">243</span> seguidores
+            </div>
+            <p class="bio">🦷 Implantes | Facetas | Ortodontia  
+Resp. Técnica Dra. Camila Ferreira CRO/PR 28.623
+CLM/PR 5501
+📲 Agende pelo WhatsApp</p>
+            <a href="https://www.instagram.com/primedent_odontologia" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+        <div class="card Odontologia">
+            <span class="category-badge">Odontologia</span>
+            <h2 class="name">Clínica Costin - Dentista Curitiba - Implante Dentário</h2>
+            <a href="https://www.instagram.com/clinica.costin" target="_blank" class="handle">@clinica.costin</a>
+            <div class="stats">
+                <span class="count">62</span> seguidores
+            </div>
+            <p class="bio">Dentista no Centro de Curitiba! 
+Próximo das Praças Centrais!
+Implantes, Próteses, Aparelhos, Clareamento e muito mais! 
+📲(41)99971-5258😁💜🦷</p>
+            <a href="https://www.instagram.com/clinica.costin" target="_blank" class="btn-visit">Ver Perfil</a>
+        </div>
+    
+    </div>
+
+    <script>
+        function filterLeads(category) {
+            const cards = document.querySelectorAll('.card');
+            const btns = document.querySelectorAll('.filter-btn');
+            
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            cards.forEach(card => {
+                if (category === 'all' || card.classList.contains(category)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

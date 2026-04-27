@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/", "destination": "/leads_curitiba_report.html" }
-  ]
-}
